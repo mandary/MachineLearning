@@ -176,24 +176,43 @@ def c45(data, max_levels):
     return root
 
 ####Extra Credit: Enhancements to your classifier##############################
-def classifier_final(data, max_levels):
+def classifier_final(data, numtrees, max_levels):
     # TODO: Your classifier with arbitrary enhancements.
     # NOTE : You're free to change the API of this function.
-    return c4(data, max_levels)
+    treelen = len(data) /numtrees
+    tree = []
+    for i in range(numtrees):
+        kDivided = data[i*treelen:(i+1)*treelen]
+        ktree = c45(kDivided, max_levels)
+        tree.append(ktree)
+    return tree
 
 def predict_final(model, point):
     # TODO: The predictor corresponding to classifier_final with arbitrary enhancements.
     # NOTE: Don't change the API of this function.
-    return predict(model, point)
+    prediction = {}
+    for i in range(len(model)):
+        p = predict(model[i], point)
+        for key, value in p.iteritems():
+            prediction[key] = prediction.get(key, 0) + value * 1.0 / len(model)
+    return prediction
 ###############################################################################
+
+# I changed the depth of dt to 9, because it's the local maximum I could find
+# for vanilla c45. As depth keeps increasing after 9, the accuracy decreases.
+
+# For extra credit/tuning, I made 40 decision tree each with 40 folds of data
+# divided from the original training data and each dt has a depth of 7
+
+
 def submission(train, test):
     # TODO: Once your tests pass, make your submission as good as you can!
     if train.__class__ == Tree:
         tree = train
     else:
-        tree = c45(train, 9)
-        #tree = classifier_final(train, 4)
-    #dump_model(tree, "tree.p")
+        #tree = c45(train, 9)
+        tree = classifier_final(train, 40, 7)
+    dump_model(tree, "model.p")
     predictions = []
     for point in test:
         predictions.append(predict_final(tree, point))
