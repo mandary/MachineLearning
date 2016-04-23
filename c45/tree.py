@@ -201,8 +201,8 @@ def predict_final(model, point):
 # I changed the depth of dt to 9, because it's the local maximum I could find
 # for vanilla c45. As depth keeps increasing after 9, the accuracy decreases.
 
-# For extra credit/tuning, I made 40 decision tree each with 40 folds of data
-# divided from the original training data and each dt has a depth of 7
+# For extra credit/tuning, I made 15 decision tree each with 15 folds of data
+# divided from the original training data and each dt has a depth of 9
 
 
 def submission(train, test):
@@ -211,7 +211,7 @@ def submission(train, test):
         tree = train
     else:
         #tree = c45(train, 9)
-        tree = classifier_final(train, 40, 7)
+        tree = classifier_final(train, 15, 9)
     dump_model(tree, "model.p")
     predictions = []
     for point in test:
